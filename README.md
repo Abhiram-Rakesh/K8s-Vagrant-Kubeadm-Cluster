@@ -13,8 +13,11 @@ The goal of this project is to simulate a **production-style Kubernetes environm
 - Real-world debugging and failure handling
 - DevOps best practices using Infrastructure as Code (IaC)
 
-The cluster is designed to be **portable**, meaning it can be spun up on any compatible Windows or Linux machine using a single command:  
-`vagrant up`.
+The cluster is designed to be **portable**, meaning it can be spun up on any compatible Windows or Linux machine using a single command:
+
+```
+vagrant up
+```
 
 ---
 
@@ -121,13 +124,24 @@ cd k8s-vagrant-kubeadm-cluster
 
 ### 2. Bring Up the Cluster
 
-`vagrant up`
+```
+vagrant up
+```
 
-This command will: - Create 3 Ubuntu VMs - Configure networking - Install containerd - Install Kubernetes components - Initialize the control plane - Deploy Calico - Join worker nodes to the cluster
+This command will: 
+  - Create 3 Ubuntu VMs
+  - Configure networking
+  - Install containerd
+  - Install Kubernetes components
+  - Initialize the control plane
+  - Deploy Calico
+  - Join worker nodes to the cluster
 
 ### 3. Access the Cluster
 
-`vagrant ssh k8s-master`
+```
+vagrant ssh k8s-master
+```
 
 ### 4. Validate the Setup
 
@@ -152,21 +166,26 @@ This project intentionally documents real-world issues encountered during setup
 
 #### 1. Vagrant SSH Timeout (Windows)
 
-    - Cause: Corrupted VirtualBox Host-Only Network Adapter
-    - Fix: Delete and recreate the adapter from VirtualBox Network settings
+  - **Cause:** Corrupted VirtualBox Host-Only Network Adapter
+  - **Fix:** Delete and recreate the adapter from VirtualBox Network settings
 
 #### 2. containerd CRI Errors
 
-    - Cause: Misaligned cgroup driver or corrupted runtime state
-    - Fix: Fully reset containerd and regenerate configuration with **SystemdCgroup=true**
+  - **Cause:** Misaligned cgroup driver or corrupted runtime state
+  - **Fix:** Fully reset containerd and regenerate configuration with **SystemdCgroup=true**
 
 #### 3. kubelet TLS Bootstrap Failures
 
-    - Cause: Partial kubeadm join attempts leaving stale state
-    - Fix: Verify connectivity on port 6443, flush iptables, regenerate join token
+  - **Cause:** Partial kubeadm join attempts leaving stale state
+  - **Fix:** Verify connectivity on port 6443, flush iptables, regenerate join token
 
 These issues and fixes closely resemble problems seen in on-prem and bare-metal Kubernetes environments.
 
 ## Recap
 
-This project demonstrates: - End-to-end Kubernetes cluster provisioning using kubeadm - Practical experience with container runtimes and kubelet behavior - Debugging Kubernetes networking, certificates, and node bootstrap - Infrastructure automation using Vagrant
+This project demonstrates: 
+  - End-to-end Kubernetes cluster provisioning using kubeadm
+  - Practical experience with container runtimes and kubelet behavior 
+  - Debugging Kubernetes networking, certificates, and node bootstrap
+  - Infrastructure automation using Vagrant
+

@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 
-echo "🐳 [CONTAINERD] Installing dependencies"
+echo "[CONTAINERD] Installing dependencies"
 apt-get update -y
 apt-get install -y ca-certificates curl gnupg lsb-release
 
-echo "🐳 [CONTAINERD] Installing containerd"
+echo "[CONTAINERD] Installing containerd"
 apt-get install -y containerd
 
-echo "🐳 [CONTAINERD] Configuring containerd"
+echo "[CONTAINERD] Configuring containerd"
 mkdir -p /etc/containerd
 containerd config default | tee /etc/containerd/config.toml
 
@@ -18,4 +18,4 @@ sed -i 's/SystemdCgroup = false/SystemdCgroup = true/' /etc/containerd/config.to
 systemctl restart containerd
 systemctl enable containerd
 
-echo "✅ [CONTAINERD] containerd ready"
+echo "[CONTAINERD] containerd ready"

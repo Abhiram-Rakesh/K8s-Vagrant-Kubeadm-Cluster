@@ -12,9 +12,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
   end
 
-  # =====================
   # Control Plane Node
-  # =====================
 config.vm.define "k8s-master" do |master|
   master.vm.hostname = "k8s-master"
   master.vm.network "private_network", ip: "192.168.56.10"
@@ -25,15 +23,14 @@ config.vm.define "k8s-master" do |master|
     vb.cpus = 2
   end
 
-  # === Kubernetes bootstrap scripts ===
+  # Kubernetes bootstrap scripts 
   master.vm.provision "shell", path: "scripts/common.sh"
   master.vm.provision "shell", path: "scripts/containerd.sh"
   master.vm.provision "shell", path: "scripts/kubernetes.sh"
+  master.vm.provision "shell", path: "scripts/master.sh"
 end
 
-  # =====================
   # Worker Node 1
-  # =====================
 config.vm.define "k8s-worker-1" do |worker|
   worker.vm.hostname = "k8s-worker-1"
   worker.vm.network "private_network", ip: "192.168.56.11"
@@ -44,15 +41,14 @@ config.vm.define "k8s-worker-1" do |worker|
     vb.cpus = 2
   end
 
-  # === Kubernetes bootstrap scripts ===
+  # Kubernetes bootstrap scripts 
   worker.vm.provision "shell", path: "scripts/common.sh"
   worker.vm.provision "shell", path: "scripts/containerd.sh"
   worker.vm.provision "shell", path: "scripts/kubernetes.sh"
+  worker.vm.provision "shell", path: "scripts/worker.sh"
 end
 
-  # =====================
   # Worker Node 2
-  # =====================
 config.vm.define "k8s-worker-2" do |worker|
   worker.vm.hostname = "k8s-worker-2"
   worker.vm.network "private_network", ip: "192.168.56.12"
@@ -63,10 +59,11 @@ config.vm.define "k8s-worker-2" do |worker|
     vb.cpus = 2
   end
 
-  # === Kubernetes bootstrap scripts ===
+  # Kubernetes bootstrap scripts 
   worker.vm.provision "shell", path: "scripts/common.sh"
   worker.vm.provision "shell", path: "scripts/containerd.sh"
   worker.vm.provision "shell", path: "scripts/kubernetes.sh"
+  worker.vm.provision "shell", path: "scripts/worker.sh"
 end
 
 end

@@ -23,6 +23,9 @@ vagrant up
 
 ## Architecture
 
+<img width="1101" height="1051" alt="K8s-Vagrant-Kubeadm-Cluster" src="https://github.com/user-attachments/assets/9fb21acd-bc4b-4767-bb41-493e056355be" />
+
+
 ### Cluster Topology
 
 - **1 Control Plane Node**
@@ -46,18 +49,6 @@ vagrant up
 - **Container Runtime**: containerd
 - **Kubernetes Bootstrap**: kubeadm
 - **Networking (CNI)**: Calico
-
-### High-Level Flow
-
-```
-Host Machine
-|
-|-- Vagrant
-|
-|-- k8s-master (API Server, Scheduler, Controller Manager, etcd)
-|-- k8s-worker-1 (Workload Node)
-|-- k8s-worker-2 (Workload Node)
-```
 
 ---
 
@@ -188,4 +179,5 @@ This project demonstrates:
   - Practical experience with container runtimes and kubelet behavior 
   - Debugging Kubernetes networking, certificates, and node bootstrap
   - Infrastructure automation using Vagrant
+
 

@@ -13,6 +13,8 @@ The goal of this project is to simulate a **production-style Kubernetes environm
 - Real-world debugging and failure handling
 - DevOps best practices using Infrastructure as Code (IaC)
 
+This project is also well-suited for **CKA (Certified Kubernetes Administrator)** and **CKAD (Certified Kubernetes Application Developer)** exam preparation, providing a hands-on environment that closely mirrors the exam cluster topology.
+
 The cluster is designed to be **portable**, meaning it can be spun up on any compatible Windows or Linux machine using a single command:
 
 ```
@@ -33,13 +35,11 @@ vagrant up
 
 ### Node Details
 
-```
 | Node Name        | Role            | IP Address        |
 |------------------|-----------------|-------------------|
 | k8s-master       | Control Plane   | 192.168.56.10     |
 | k8s-worker-1     | Worker Node     | 192.168.56.11     |
 | k8s-worker-2     | Worker Node     | 192.168.56.12     |
-```
 
 ### Technology Stack
 
@@ -49,6 +49,7 @@ vagrant up
 - **Container Runtime**: containerd
 - **Kubernetes Bootstrap**: kubeadm
 - **Networking (CNI)**: Calico
+- **Kubernetes Version**: v1.32
 
 ---
 
@@ -110,7 +111,7 @@ vagrant up
 
 ```
 git clone https://github.com/Abhiram-Rakesh/K8s-Vagrant-Kubeadm-Cluster.git
-cd k8s-vagrant-kubeadm-cluster
+cd K8s-Vagrant-Kubeadm-Cluster
 ```
 
 ### 2. Bring Up the Cluster
@@ -138,7 +139,7 @@ vagrant ssh k8s-master
 
 ```
 kubectl get nodes
-kubectl get podes -n kube-system
+kubectl get pods -n kube-system
 ```
 
 Expected output:

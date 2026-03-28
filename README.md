@@ -150,6 +150,22 @@ k8s-worker-1   Ready
 k8s-worker-2   Ready
 ```
 
+## Teardown
+
+To stop the VMs without destroying them:
+
+```
+vagrant halt
+```
+
+To destroy the cluster and free all resources:
+
+```
+vagrant destroy -f
+```
+
+---
+
 ## Troubleshooting Guide
 
 This project intentionally documents real-world issues encountered during setup

@@ -17,6 +17,16 @@ while [ ! -f ${JOIN_SCRIPT} ]; do
 done
 
 echo "[WORKER] Join script found. Joining cluster..."
-bash ${JOIN_SCRIPT}
 
-echo "[WORKER] Successfully joined the cluster"
+RETRIES=3
+for i in $(seq 1 ${RETRIES}); do
+    if bash ${JOIN_SCRIPT}; then
+        echo "[WORKER] Successfully joined the cluster"
+        exit 0
+    fi
+    echo "[WORKER] Join attempt ${i}/${RETRIES} failed, retrying in 15s..."
+    sleep 15
+done
+
+echo "[WORKER] ERROR: Failed to join cluster after ${RETRIES} attempts"
+exit 1

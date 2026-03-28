@@ -50,6 +50,22 @@ vagrant up
 - **Kubernetes Bootstrap**: kubeadm
 - **Networking (CNI)**: Calico
 - **Kubernetes Version**: v1.32
+- **Calico Version**: v3.29.0
+
+---
+
+## Configuration
+
+All version and network settings are centralised in `config/settings.yaml`:
+
+```yaml
+kubernetes_version: "v1.32"
+calico_version: "v3.29.0"
+pod_cidr: "192.168.0.0/16"
+master_ip: "192.168.56.10"
+```
+
+To upgrade Kubernetes or Calico, change the version here — no need to touch any scripts or the Vagrantfile.
 
 ---
 
@@ -120,7 +136,7 @@ cd K8s-Vagrant-Kubeadm-Cluster
 vagrant up
 ```
 
-This command will: 
+This command will:
   - Create 3 Ubuntu VMs
   - Configure networking
   - Install containerd
@@ -150,6 +166,8 @@ k8s-worker-1   Ready
 k8s-worker-2   Ready
 ```
 
+---
+
 ## Teardown
 
 To stop the VMs without destroying them:
@@ -168,33 +186,74 @@ vagrant destroy -f
 
 ## Troubleshooting Guide
 
-This project intentionally documents real-world issues encountered during setup
+This project intentionally documents real-world issues encountered during setup.
 
 ### Common Issues & Resolutions
 
-#### 1. Vagrant SSH Timeout (Windows)
+#### 1. VM Name Already Exists (Windows)
 
-  - **Cause:** Corrupted VirtualBox Host-Only Network Adapter
-  - **Fix:** Delete and recreate the adapter from VirtualBox Network settings
+- **Cause:** A previous `vagrant up` failed mid-way, leaving stale VM registrations in VirtualBox
+- **Fix:**
+  1. Open VirtualBox GUI → right-click each stale VM → **Remove → Delete all files**
+  2. If VMs don't appear in GUI, unregister manually:
+     ```
+     VBoxManage list vms
+     VBoxManage unregistervm <uuid> --delete
+     ```
+  3. Delete Vagrant's local state: `rm -r .vagrant`
+  4. Run `vagrant up`
 
-#### 2. containerd CRI Errors
+#### 2. SSH Timeout on Boot (Windows)
 
-  - **Cause:** Misaligned cgroup driver or corrupted runtime state
-  - **Fix:** Fully reset containerd and regenerate configuration with **SystemdCgroup=true**
+- **Cause:** Hyper-V or Windows Hypervisor Platform is enabled and competing with VirtualBox for hardware virtualisation
+- **Fix:**
+  1. Open PowerShell as Administrator and check:
+     ```
+     bcdedit /enum | findstr hypervisorlaunchtype
+     ```
+  2. If it shows `Auto`, disable it:
+     ```
+     bcdedit /set hypervisorlaunchtype off
+     ```
+  3. Also disable in **Windows Features**: Hyper-V, Virtual Machine Platform, Windows Hypervisor Platform
+  4. Reboot, then run `vagrant up`
 
-#### 3. kubelet TLS Bootstrap Failures
+#### 3. SSH Timeout — Port 2222 Already in Use (Windows)
 
-  - **Cause:** Partial kubeadm join attempts leaving stale state
-  - **Fix:** Verify connectivity on port 6443, flush iptables, regenerate join token
+- **Cause:** A leftover `VBoxHeadless.exe` process from a previous run is holding port 2222
+- **Fix:**
+  1. Find the process:
+     ```
+     netstat -ano | findstr :2222
+     ```
+  2. Kill it using the PID from the output:
+     ```
+     taskkill /F /PID <pid>
+     ```
+  3. Run `vagrant destroy -f` then `vagrant up`
+
+#### 4. containerd CRI Errors
+
+- **Cause:** Misaligned cgroup driver or corrupted runtime state
+- **Fix:** Fully reset containerd and regenerate configuration with **SystemdCgroup=true**
+
+#### 5. kubelet TLS Bootstrap Failures
+
+- **Cause:** Transient API server unavailability during worker node join (cluster still stabilising post-Calico deployment)
+- **Fix:** The worker script automatically retries the join up to 3 times. If it still fails, re-provision manually:
+  ```
+  vagrant provision k8s-worker-1
+  vagrant provision k8s-worker-2
+  ```
 
 These issues and fixes closely resemble problems seen in on-prem and bare-metal Kubernetes environments.
 
+---
+
 ## Recap
 
-This project demonstrates: 
+This project demonstrates:
   - End-to-end Kubernetes cluster provisioning using kubeadm
-  - Practical experience with container runtimes and kubelet behavior 
+  - Practical experience with container runtimes and kubelet behavior
   - Debugging Kubernetes networking, certificates, and node bootstrap
   - Infrastructure automation using Vagrant
-
-
